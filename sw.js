@@ -2,7 +2,7 @@
  * Service Worker: VISIT-AE GriyaNet PWA
  * Strategi Network-First untuk App Shell agar pembaruan kode segera aktif
  */
-const CACHE_NAME = "visit-ae-cache-v2";
+const CACHE_NAME = "visit-ae-cache-v3";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",

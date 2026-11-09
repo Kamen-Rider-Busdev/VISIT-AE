@@ -12,10 +12,13 @@ Aplikasi Web Mobile-First (Progressive Web App) untuk Account Executive (AE) Lap
    - Level 3: Pilih Work Order Aktif (hanya menampilkan WO berstatus `OPEN` atau `SCHEDULED`).
 2. **Master Dropdown Dinamis dari Spreadsheet (`MASTER_DROPDOWN`)**:
    - Seluruh opsi formulir (Urutan Visit, Evaluasi 7 Topik, Taksonomi Pain Point, Detail Kendala berpasangan, dan Kategori Upaya) diambil langsung dari sheet `MASTER_DROPDOWN`. Admin dapat menambah atau mengubah daftar opsi langsung di Google Sheets tanpa menyentuh kode web.
-3. **Zero-Exposure Credential Security**:
+3. **Zero-Exposure Credential Security & Onboarding Belakang Layar**:
    - Repositori publik GitHub Pages tidak menyimpan URL Deployment, Folder Drive ID, Spreadsheet ID, maupun Kode Akses apa pun.
-   - Kredensial backend disimpan di Google Apps Script `PropertiesService`, sedangkan browser AE menerima konfigurasi melalui URL hash fragment (`#cfg=`) atau panel Koneksi yang tersimpan lokal di `localStorage`.
-4. **Kartu Konteks Pelanggan Otomatis & GPS/Foto Terkompresi**:
+   - Kredensial backend disimpan di Google Apps Script `PropertiesService`, sedangkan browser AE menerima konfigurasi secara otomatis melalui tautan aktivasi `#cfg=` yang tersimpan lokal di `localStorage` tanpa form pengaturan teknis di tampilan awal.
+   - Mode Admin tersembunyi tersedia via parameter URL `?admin=1` atau `#admin` apabila Admin perlu mengetik ulang koneksi secara manual di perangkat uji.
+4. **Sinkronisasi Otomatis & Non-Destruktif**:
+   - Data WO aktif dan `MASTER_DROPDOWN` tersinkronisasi otomatis saat aplikasi dibuka, secara berkala setiap 60 detik ketika layar aktif, saat kembali dari aplikasi lain (`visibilitychange`), saat koneksi pulih (`online`), dan setelah laporan dikirim (`doPost`) tanpa tombol refresh manual dan tanpa menghapus formulir yang sedang diisi.
+5. **Kartu Konteks Pelanggan Otomatis & GPS/Foto Terkompresi**:
    - Pintasan WhatsApp `wa.me`, penguncian koordinat Geolocation API, dan kompresi foto kamera di sisi klien (< 200 KB) sebelum dikirim ke Google Drive.
 
 ---
@@ -96,8 +99,9 @@ VISIT-AE/
 
 ### Langkah 4: Bagikan Link Onboarding Aman ke Tim AE
 1. Kembali ke Google Sheets, buka **`VISIT-AE Admin`** > **`2. Buat Link Onboarding AE`**.
-2. Masukkan URL GitHub Pages dan URL Web App (`/exec`), lalu klik **Buat & Simpan Link Onboarding**.
-3. Bagikan link berakhiran `#cfg=...` ke grup internal AE. Saat AE membuka link tersebut di ponsel, browser membaca fragment `#cfg=` secara lokal, menyimpannya ke `localStorage`, dan langsung menghapus `#cfg=` dari address bar.
+2. Masukkan URL GitHub Pages (`https://kamen-rider-busdev.github.io/VISIT-AE/`) dan URL Web App (`/exec`), lalu klik **Buat & Simpan Link Onboarding**.
+3. Bagikan link berakhiran `#cfg=...` ke grup internal AE. Saat AE membuka link tersebut di ponsel, browser membaca fragment `#cfg=` otomatis di belakang layar, menyimpannya ke `localStorage`, menghapus `#cfg=` dari address bar, dan langsung membuka formulir kerja tanpa perlu mengisi pengaturan apa pun.
+4. Untuk keperluan pengujian atau input manual oleh Admin, buka URL dengan tambahan `?admin=1` atau `#admin`.
 
 ---
 

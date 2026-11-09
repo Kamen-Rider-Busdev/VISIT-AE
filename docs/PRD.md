@@ -32,12 +32,16 @@ Menyediakan antarmuka pengisian laporan visit isolir yang ringan, aman tanpa rah
    - Level 3: Dropdown Work Order Aktif (`OPEN` / `SCHEDULED`).
 2. **100% Dropdown Dinamis dari Sheet `MASTER_DROPDOWN`**:
    - Seluruh opsi Urutan Visit, Topik 1-7, Kategori Pain Point, Kelompok Detail Kendala berpasangan (plus opsi ketik manual fallback), dan Kategori Upaya Penyelamatan berikut pemetaan Target Status WO dibaca langsung melalui `doGet()`.
-3. **Manajemen Koneksi Aman Tanpa Ekspos Rahasia**:
+3. **Manajemen Koneksi Aman di Belakang Layar Tanpa Ekspos Rahasia**:
    - Backend menyimpan Folder Drive ID, Spreadsheet ID opsional, dan App Access Key di `PropertiesService`.
-   - Admin menerbitkan tautan onboarding `#cfg=` yang hanya diproses oleh browser AE ke `localStorage` dan langsung dihapus dari address bar, disertai panel `Koneksi` manual.
-4. **Template Spreadsheet Kosong (`TEMPLATE-SPREADSHEET-VISIT-AE.xlsx`)**:
+   - Admin menerbitkan tautan aktivasi `#cfg=` yang diproses otomatis di belakang layar ke `localStorage` dan langsung dihapus dari address bar; AE tidak mengisi URL `/exec` atau Access Key pada tampilan awal.
+   - Panel pengaturan koneksi hanya dapat dibuka secara tersembunyi oleh Admin melalui parameter `?admin=1` atau `#admin`.
+4. **Sinkronisasi Otomatis Tanpa Tombol Refresh Manual**:
+   - Data WO aktif dan `MASTER_DROPDOWN` disinkronkan otomatis saat aplikasi dibuka, secara berkala saat aktif di layar, saat peramban kembali fokus (`visibilitychange` dengan jeda anti-spam) atau jaringan pulih (`online`), serta setelah laporan terkirim (`doPost`), tanpa memutus atau menghapus formulir yang sedang diisi AE.
+   - Header hanya menampilkan indikator status sinkronisasi pasif (`Belum Aktif`, `Menyinkronkan...`, `Sinkron HH:MM`, `Offline`, `Sinyal Lemah`) tanpa tombol refresh manual.
+5. **Template Spreadsheet Kosong (`TEMPLATE-SPREADSHEET-VISIT-AE.xlsx`)**:
    - Berisi 3 sheet terstruktur (`MONITORING_CABANG`, `RESPON_FORM_VISIT`, `MASTER_DROPDOWN`) dengan 0 data dummy WO dan 0 baris respon awal.
-5. **Kartu Konteks Pelanggan, GPS Geolocation, Kompresi Foto (< 200 KB), & PWA Installable**:
+6. **Kartu Konteks Pelanggan, GPS Geolocation, Kompresi Foto (< 200 KB), & PWA Installable**:
    - Sama dengan spesifikasi inti, bebas dari data tiruan/mock di produksi.
 
 ## 06 Out of Scope (For Now)
@@ -49,11 +53,11 @@ Menyediakan antarmuka pengisian laporan visit isolir yang ringan, aman tanpa rah
 
 ## 07 Success Metrics
 - Zero hardcoded secret/ID/dummy data di seluruh file repositori publik.
-- 100% perubahan teks dropdown pada `MASTER_DROPDOWN` langsung tampil di formulir PWA pada refresh berikutnya tanpa edit kode HTML/JS.
+- 100% perubahan teks dropdown pada `MASTER_DROPDOWN` tersinkron otomatis ke formulir PWA tanpa tombol refresh manual dan tanpa edit kode HTML/JS.
 - Ukuran foto terkompresi di bawah 250 KB sebelum transmisi.
 
 ## 08 Acceptance Criteria
 - Spreadsheet template benar-benar kosong dari data WO dan Visit Isolir AE.
-- Aplikasi yang belum dikonfigurasi menampilkan panel `Koneksi` tanpa memuat data tiruan.
+- Aplikasi yang belum diaktivasi hanya menampilkan pemberitahuan ramah agar AE membuka tautan aktivasi dari Admin (tanpa kolom URL `/exec` atau Access Key di tampilan awal) dan tanpa memuat data tiruan.
 - Saat terhubung ke sheet kosong (0 WO), seluruh opsi dropdown formulir tetap terbaca dan terisi penuh dari `MASTER_DROPDOWN`.
-- Tidak ada karakter emoji pada antarmuka pengguna maupun file sistem.
+- Tidak ada tombol `Refresh Data` dan tidak ada karakter emoji pada antarmuka pengguna maupun file sistem.

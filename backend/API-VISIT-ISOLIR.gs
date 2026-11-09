@@ -192,7 +192,7 @@ function bukaDialogLinkOnboarding() {
     '.note{font-size:11px;color:#64748B;margin-top:4px;line-height:1.4;}' +
     '</style></head><body><div class="card">' +
     '<div style="font-weight:700;font-size:14px;margin-bottom:6px;">Generator Link Onboarding AE Aman</div>' +
-    '<div class="note">Tautan menggunakan URL hash (#cfg=...) yang diproses lokal oleh browser AE dan tidak dikirim ke server GitHub Pages.</div>' +
+    '<div class="note">Tautan menggunakan URL hash (#cfg=...) yang diproses otomatis di belakang layar oleh peramban AE tanpa perlu input pengaturan di tampilan aplikasi.</div>' +
     '<label>URL GitHub Pages (Frontend VISIT-AE)</label>' +
     '<input type="url" id="pagesUrl">' +
     '<label>URL Deployment Web App Apps Script (/exec)</label>' +

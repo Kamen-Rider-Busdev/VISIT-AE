@@ -17,7 +17,8 @@ Topologi hubungan sistem antara Frontend di GitHub Pages dan Backend di Google W
 |  |             Aplikasi Web PWA VISIT-AE (Hosting: GitHub Pages)               |  |
 |  |  - Berkas: index.html (Single-File Mandiri + Tailwind CSS + Vengeance UI)  |  |
 |  |  - Service Worker (sw.js Network-First) & Web Manifest (manifest.json)      |  |
-|  |  - Onboarding Aman: #cfg= Hash Fragment -> localStorage (Tanpa Secret Repo) |  |
+|  |  - Onboarding Belakang Layar: #cfg= -> localStorage (Setup Admin ?admin=1)  |  |
+|  |  - Auto-Sync Non-Destruktif: Init, Interval 60s, Visibility, Online, Post   |  |
 |  |  - Dynamic Dropdown Builder: Render form langsung dari MASTER_DROPDOWN      |  |
 |  |  - Kompresi Gambar Klien (HTML Canvas API: Max 800px, JPEG 0.7)             |  |
 |  |  - Sensor GPS Terkunci Otomatis (Browser Geolocation API)                   |  |

@@ -15,9 +15,10 @@ Aplikasi `VISIT-AE` di-host pada repositori publik GitHub Pages dan terhubung ke
 2. **Otorisasi Fail-Closed pada Backend**:
    - Baik `doGet(e)` (`?key=...`) maupun `doPost(e)` (`payload.accessKey`) wajib memverifikasi kecocokan kunci akses menggunakan perbandingan waktu konstan terhadap `VISIT_AE_APP_ACCESS_KEY`.
    - Jika `VISIT_AE_APP_ACCESS_KEY` belum dipasang di `PropertiesService`, endpoint otomatis menolak seluruh permintaan (kode `503`).
-3. **Onboarding Klien Tanpa Jejak Server (`#cfg=` + `localStorage`)**:
-   - Tautan onboarding memakai URL hash fragment (`#cfg=...`) karena browser tidak pernah mengirimkan fragment `#` dalam permintaan HTTP ke server GitHub Pages.
+3. **Onboarding Belakang Layar & Isolasi Panel Admin (`#cfg=` + `?admin=1`)**:
+   - Tautan aktivasi memakai URL hash fragment (`#cfg=...`) karena browser tidak pernah mengirimkan fragment `#` dalam permintaan HTTP ke server GitHub Pages.
    - Begitu fragment dibaca oleh `index.html`, URL divalidasi harus berdomain `https://script.google.com`, konfigurasi disimpan di `localStorage` perangkat AE, lalu fragment segera dihapus dari address bar melalui `history.replaceState`.
+   - Panel konfigurasi manual (`#setupPanel`) tidak ditampilkan di tampilan normal AE maupun saat terjadi error `401`, dan hanya terbuka bila diakses eksplisit dengan parameter `?admin=1` atau `#admin`.
 4. **Perlindungan Privasi Foto Bukti Drive**:
    - Foto yang diunggah lewat `simpanFotoKeDrive()` mengikuti perizinan folder Drive tujuan dan dilarang mengaktifkan `DriveApp.Access.ANYONE_WITH_LINK` secara sepihak.
 5. **Sanitasi Formula Injection & Concurrency Lock**:
