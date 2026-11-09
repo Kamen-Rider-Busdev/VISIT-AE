@@ -1,0 +1,16 @@
+# Lingkungan & Kredensial Lokal (Dilarang Masuk ke Repositori Publik)
+.env
+.env.*
+*.key
+*.pem
+*credentials*.json
+*secret*
+.clasp.json
+
+# Berkas Sementara & Sistem Operasi
+*.tmp
+*.bak
+.tmp_*
+.DS_Store
+Thumbs.db
+desktop.ini

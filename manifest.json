@@ -1,0 +1,22 @@
+{
+  "name": "VISIT-AE GriyaNet",
+  "short_name": "VISIT-AE",
+  "description": "Aplikasi Lapangan Kunjungan Isolir & Retensi Pelanggan GriyaNet",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2563EB",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

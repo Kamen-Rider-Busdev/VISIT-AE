@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="description" content="Aplikasi Lapangan Kunjungan Isolir & Retensi Pelanggan GriyaNet">
+  <title>VISIT-AE | GriyaNet</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/icon-192.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+  <!-- Vengeance UI Light Theme Custom Properties -->
+  <style>
+    :root {
+      --vng-primary: #2563EB;
+      --vng-primary-hover: #1D4ED8;
+      --vng-primary-foreground: #FFFFFF;
+      --vng-accent: #3B82F6;
+      --vng-background: #F8FAFC;
+      --vng-surface: #FFFFFF;
+      --vng-border: #E2E8F0;
+      --vng-border-focus: #93C5FD;
+      --vng-text-primary: #0F172A;
+      --vng-text-body: #334155;
+      --vng-text-muted: #64748B;
+      --vng-success: #10B981;
+      --vng-success-hover: #059669;
+      --vng-warning: #F59E0B;
+      --vng-error: #EF4444;
+      --vng-radius-md: 10px;
+      --vng-transition-speed: 180ms;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--vng-background);
+      color: var(--vng-text-body);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    /* Vengeance Tactile Button */
+    .btn-vng-primary {
+      background-color: var(--vng-primary);
+      color: var(--vng-primary-foreground);
+      border-radius: var(--vng-radius-md);
+      transition: all var(--vng-transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-vng-primary:hover:not(:disabled) {
+      background-color: var(--vng-primary-hover);
+    }
+    .btn-vng-primary:active:not(:disabled) {
+      transform: scale(0.98);
+      background-color: var(--vng-primary-hover);
+    }
+    .btn-vng-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Vengeance Input & Select Fields */
+    .input-vng {
+      border: 1px solid var(--vng-border);
+      border-radius: var(--vng-radius-md);
+      background-color: var(--vng-surface);
+      color: var(--vng-text-primary);
+      transition: border-color var(--vng-transition-speed) ease, box-shadow var(--vng-transition-speed) ease;
+    }
+    .input-vng:focus {
+      outline: none;
+      border-color: var(--vng-accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .input-vng:disabled {
+      background-color: #F1F5F9;
+      color: #94A3B8;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-12">
+
+  <!-- Top App Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center font-bold text-white text-sm">
+          GN
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-[#0F172A] leading-tight">VISIT-AE</h1>
+          <p class="text-xs text-[#64748B] font-medium">GriyaNet Retensi Lapangan</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button type="button" id="btnToggleSetup" class="px-2.5 py-1 text-xs font-semibold text-[#334155] bg-slate-50 border border-[#E2E8F0] rounded-md hover:bg-slate-100 transition-colors flex items-center space-x-1.5">
+          <span id="connDot" class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+          <span>Koneksi</span>
+        </button>
+        <button type="button" id="btnReloadData" class="px-2.5 py-1 text-xs font-semibold text-[#2563EB] bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
+          Refresh Data
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container Mobile First -->
+  <main class="max-w-md mx-auto px-4 py-5 space-y-5">
+
+    <!-- PANEL SETUP KONEKSI AMAN (ZERO SECRET IN REPO) -->
+    <section id="setupPanel" class="hidden bg-white rounded-xl border border-blue-200 p-4 shadow-sm space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-[#0F172A]">Pengaturan Koneksi Spreadsheet</h2>
+        <button type="button" id="btnTutupSetup" class="text-xs font-semibold text-[#64748B] hover:text-[#0F172A]">Tutup</button>
+      </div>
+      <p class="text-xs text-[#64748B] leading-relaxed">
+        Kredensial disimpan lokal di perangkat Anda dan tidak pernah dicatat dalam kode publik. Anda juga dapat langsung membuka tautan onboarding resmi dari Admin.
+      </p>
+
+      <div class="space-y-1">
+        <label for="inputApiUrl" class="block text-xs font-semibold text-[#334155]">
+          URL Web App Google Apps Script (/exec)
+        </label>
+        <input type="url" id="inputApiUrl" placeholder="https://script.google.com/macros/s/.../exec" class="input-vng w-full px-3 py-2 text-xs font-mono-code">
+      </div>
+
+      <div class="space-y-1">
+        <label for="inputAccessKey" class="block text-xs font-semibold text-[#334155]">
+          Kode Akses Aplikasi (App Access Key)
+        </label>
+        <div class="flex space-x-2">
+          <input type="password" id="inputAccessKey" placeholder="Masukkan kode akses dari Admin" class="input-vng flex-1 px-3 py-2 text-xs font-mono-code">
+          <button type="button" id="btnToggleKeyVis" class="px-3 py-2 text-xs font-semibold text-[#334155] bg-slate-100 border border-[#E2E8F0] rounded-lg hover:bg-slate-200 transition-colors shrink-0">
+            Lihat
+          </button>
+        </div>
+      </div>
+
+      <div class="flex space-x-2 pt-1">
+        <button type="button" id="btnSimpanKoneksi" class="btn-vng-primary flex-1 py-2.5 px-3 text-xs font-bold">
+          Simpan &amp; Hubungkan
+        </button>
+        <button type="button" id="btnResetKoneksi" class="hidden px-3 py-2.5 text-xs font-bold text-white bg-[#EF4444] rounded-lg hover:opacity-90 transition-opacity shrink-0">
+          Putuskan
+        </button>
+      </div>
+    </section>
+
+    <!-- Notification Banner -->
+    <div id="statusBanner" class="hidden p-3.5 rounded-xl border text-sm font-medium transition-all"></div>
+
+    <!-- SEKSI 1: FILTER BERTINGKAT 3 TINGKAT (CASCADING SELECTS) -->
+    <section class="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm space-y-3.5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-[#0F172A]">1. Pilihan Penugasan Lapangan</h2>
+        <span id="badgeTotalWO" class="text-xs font-semibold bg-blue-50 text-[#2563EB] px-2 py-0.5 rounded-full border border-blue-200">
+          Menunggu Koneksi
+        </span>
+      </div>
+
+      <!-- Tingkat 1: Pilih Cabang -->
+      <div class="space-y-1">
+        <label for="selectCabang" class="block text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+          Pilih Cabang Operasional
+        </label>
+        <select id="selectCabang" class="input-vng w-full px-3 py-2.5 text-sm font-medium" disabled>
+          <option value="">-- Hubungkan Spreadsheet Terlebih Dahulu --</option>
+        </select>
+      </div>
+
+      <!-- Tingkat 2: Pilih Nama AE -->
+      <div class="space-y-1">
+        <label for="selectAE" class="block text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+          Nama AE Pelaksana
+        </label>
+        <select id="selectAE" class="input-vng w-full px-3 py-2.5 text-sm font-medium" disabled>
+          <option value="">-- Pilih Cabang Terlebih Dahulu --</option>
+        </select>
+      </div>
+
+      <!-- Tingkat 3: Pilih Work Order Aktif -->
+      <div class="space-y-1">
+        <label for="selectWO" class="block text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+          Pilih Work Order Pelanggan (Aktif)
+        </label>
+        <select id="selectWO" class="input-vng w-full px-3 py-2.5 text-sm font-medium" disabled>
+          <option value="">-- Pilih AE Terlebih Dahulu --</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- SEKSI 2: KARTU KONTEKS PELANGGAN (CUSTOMER CARD) -->
+    <section id="cardPelanggan" class="hidden bg-white rounded-xl border border-blue-200 p-4 shadow-sm space-y-3 bg-gradient-to-b from-blue-50/50 to-white">
+      <div class="flex items-center justify-between border-b border-blue-100 pb-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-800">Detail Pelanggan Terpilih</span>
+          <h3 id="custNama" class="text-base font-bold text-[#0F172A] mt-0.5">-</h3>
+        </div>
+        <span id="custPaymentBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-[#2563EB] text-white">
+          P1
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <span class="text-[#64748B] block">ID PPPoE</span>
+          <span id="custPPPoE" class="font-mono-code font-semibold text-[#0F172A]">-</span>
+        </div>
+        <div>
+          <span class="text-[#64748B] block">Paket Internet</span>
+          <span id="custPaket" class="font-semibold text-[#0F172A]">-</span>
+        </div>
+        <div>
+          <span class="text-[#64748B] block">Nomor WhatsApp</span>
+          <span id="custNoHp" class="font-mono-code font-semibold text-[#0F172A]">-</span>
+        </div>
+        <div>
+          <span class="text-[#64748B] block">Status Visit</span>
+          <span id="custStatusVisit" class="font-semibold text-[#F59E0B]">-</span>
+        </div>
+        <div class="col-span-2">
+          <span class="text-[#64748B] block">Alamat Pemasangan</span>
+          <span id="custAlamat" class="font-medium text-[#334155] block mt-0.5">-</span>
+        </div>
+      </div>
+
+      <!-- Tombol Pintasan WhatsApp -->
+      <a id="btnWhatsApp" href="#" target="_blank" rel="noopener noreferrer" class="hidden w-full py-2 px-3 text-xs font-bold text-center text-white bg-[#10B981] hover:bg-[#059669] active:scale-98 rounded-lg transition-all flex items-center justify-center space-x-1.5 shadow-sm">
+        <span>Buka WhatsApp Silaturahmi</span>
+      </a>
+    </section>
+
+    <!-- FORMULIR LAPORAN HASIL KUNJUNGAN -->
+    <form id="formVisit" class="space-y-5">
+
+      <!-- SEKSI 3: SENSOR KOORDINAT GPS -->
+      <section class="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm space-y-2.5">
+        <div class="flex items-center justify-between">
+          <label for="inputGPS" class="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+            2. Titik Koordinat GPS Kunjungan
+          </label>
+          <span id="gpsStatusText" class="text-xs font-medium text-[#64748B]">Belum Terkunci</span>
+        </div>
+        <div class="flex space-x-2">
+          <input type="text" id="inputGPS" name="gps" readonly placeholder="Klik Kunci Lokasi Terkini" class="input-vng flex-1 px-3 py-2 text-xs font-mono-code text-[#334155] bg-slate-50">
+          <button type="button" id="btnKunciGPS" class="px-3 py-2 text-xs font-semibold bg-[#0F172A] text-white rounded-lg hover:opacity-90 active:scale-98 transition-all shrink-0">
+            Kunci Lokasi
+          </button>
+        </div>
+        <p class="text-[11px] text-[#64748B]">
+          Pastikan GPS ponsel aktif saat menekan tombol kunci lokasi untuk verifikasi kehadiran fisik.
+        </p>
+      </section>
+
+      <!-- SEKSI 4: INSTRUMEN 7 TOPIK SILATURAHMI & KENDALA (100% DINAMIS DARI MASTER_DROPDOWN) -->
+      <section class="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+            3. Instrumen Laporan Silaturahmi
+          </h2>
+          <span id="badgeMasterSync" class="text-[11px] font-medium text-[#64748B]">
+            Opsi dari Spreadsheet
+          </span>
+        </div>
+
+        <!-- Urutan Kunjungan -->
+        <div class="space-y-1">
+          <label for="urutanVisit" class="block text-xs font-semibold text-[#334155]">Urutan Kunjungan</label>
+          <select id="urutanVisit" name="urutanVisit" class="input-vng w-full px-3 py-2 text-sm" disabled required>
+            <option value="">-- Memuat Opsi dari Spreadsheet --</option>
+          </select>
+        </div>
+
+        <!-- 7 Topik Empati Dropdown Dinamis -->
+        <div class="space-y-3 pt-1 border-t border-slate-100">
+          <span class="text-xs font-bold text-[#0F172A] block">Evaluasi 7 Topik Percakapan Konsultatif:</span>
+
+          <div class="space-y-1">
+            <label for="topik1" class="block text-xs text-[#334155]">1. Kondisi Layanan &amp; Silaturahmi Awal</label>
+            <select id="topik1" name="topik1" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik2" class="block text-xs text-[#334155]">2. Pemahaman Mekanisme Tagihan (+30 Hari)</label>
+            <select id="topik2" name="topik2" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik3" class="block text-xs text-[#334155]">3. Kondisi Finansial Pelanggan</label>
+            <select id="topik3" name="topik3" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik4" class="block text-xs text-[#334155]">4. Kualitas Layanan &amp; Komplain Teknis</label>
+            <select id="topik4" name="topik4" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik5" class="block text-xs text-[#334155]">5. Penawaran dari Provider Lain</label>
+            <select id="topik5" name="topik5" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik6" class="block text-xs text-[#334155]">6. Kesesuaian Paket &amp; Rekomendasi Solusi</label>
+            <select id="topik6" name="topik6" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label for="topik7" class="block text-xs text-[#334155]">7. Komitmen Pembayaran</label>
+            <select id="topik7" name="topik7" class="input-vng w-full px-2.5 py-1.5 text-xs" disabled required>
+              <option value="">-- Memuat Opsi --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Taksonomi Pain Point -->
+        <div class="space-y-1 pt-2 border-t border-slate-100">
+          <label for="painPoint" class="block text-xs font-semibold text-[#0F172A]">Kategori Kendala Utama (Pain Point)</label>
+          <select id="painPoint" name="painPoint" class="input-vng w-full px-3 py-2 text-sm" disabled required>
+            <option value="">-- Memuat Opsi --</option>
+          </select>
+        </div>
+
+        <!-- Kelompok Detail Kendala (Dependent Dropdown + Fallback Manual) -->
+        <div class="space-y-2">
+          <div class="space-y-1">
+            <label for="selectDetailKendala" class="block text-xs font-semibold text-[#334155]">Kelompok Detail Kendala</label>
+            <select id="selectDetailKendala" class="input-vng w-full px-3 py-2 text-xs" disabled required>
+              <option value="">-- Pilih Kategori Kendala Terlebih Dahulu --</option>
+            </select>
+          </div>
+          <div id="wrapperDetailManual" class="hidden space-y-1">
+            <label for="inputDetailKendalaManual" class="block text-[11px] font-semibold text-[#64748B]">Ketik Detail Kendala Khusus</label>
+            <input type="text" id="inputDetailKendalaManual" placeholder="Tuliskan detail kendala spesifik pelanggan..." class="input-vng w-full px-3 py-2 text-xs">
+          </div>
+        </div>
+
+        <!-- Kategori Upaya Penyelamatan -->
+        <div class="space-y-1">
+          <label for="kategoriUpaya" class="block text-xs font-semibold text-[#0F172A]">Kategori Upaya Penyelamatan</label>
+          <select id="kategoriUpaya" name="kategoriUpaya" class="input-vng w-full px-3 py-2 text-sm" disabled required>
+            <option value="">-- Memuat Opsi --</option>
+          </select>
+        </div>
+
+        <!-- Tanggal Janji Bayar -->
+        <div class="space-y-1">
+          <label for="tglBayar" class="block text-xs font-semibold text-[#334155]">Tanggal Janji Bayar (Jika Ada)</label>
+          <input type="date" id="tglBayar" name="tglBayar" class="input-vng w-full px-3 py-2 text-xs font-mono-code text-[#334155]">
+        </div>
+
+        <!-- Catatan Ringkas AE -->
+        <div class="space-y-1">
+          <label for="catatanAE" class="block text-xs font-semibold text-[#334155]">Catatan Tambahan AE</label>
+          <textarea id="catatanAE" name="catatan" rows="2" placeholder="Catat poin penting silaturahmi dengan pelanggan..." class="input-vng w-full px-3 py-2 text-xs"></textarea>
+        </div>
+      </section>
+
+      <!-- SEKSI 5: BUKTI FOTO KUNJUNGAN & KOMPRESI KLIEN -->
+      <section class="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm space-y-3">
+        <label for="inputFoto" class="block text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+          4. Bukti Foto Kunjungan Lapangan
+        </label>
+
+        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
+          <input type="file" id="inputFoto" accept="image/*" capture="environment" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div id="fotoPlaceholder" class="space-y-1">
+            <p class="text-xs font-semibold text-[#2563EB]">Pilih atau Ambil Foto dari Kamera</p>
+            <p class="text-[11px] text-[#64748B]">Foto rumah/modem pelanggan (Otomatis dikompresi &lt; 200 KB)</p>
+          </div>
+          <div id="fotoPreviewContainer" class="hidden space-y-2">
+            <img id="imgPreview" src="" alt="Pratinjau Foto" class="max-h-48 mx-auto rounded-lg border border-[#E2E8F0]">
+            <p id="fotoMeta" class="text-[11px] font-mono-code text-[#64748B]"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKSI 6: TOMBOL KIRIM LAPORAN -->
+      <section class="pt-2">
+        <button type="submit" id="btnSubmit" class="btn-vng-primary w-full py-3.5 px-4 font-bold text-sm shadow-md flex items-center justify-center space-x-2" disabled>
+          <span id="btnSubmitText">Kirim Laporan Kunjungan</span>
+        </button>
+      </section>
+
+    </form>
+
+  </main>
+
+  <!-- Client Controller (Zero Hardcoded Secret, Zero Mock Data, 100% Sheet-Driven Dropdowns) -->
+  <script>
+    const STORAGE_KEY_CFG = "visit_ae_runtime_cfg_v1";
+    const MAX_IMAGE_WIDTH = 800;
+    const JPEG_QUALITY = 0.7;
+
+    // State Global
+    let appData = null;
+    let dropdownOptions = null;
+    let selectedCustomer = null;
+    let fotoBase64Compressed = "";
+    let namaFileFotoAsli = "";
+
+    // Elemen DOM Setup Koneksi
+    const setupPanel = document.getElementById("setupPanel");
+    const btnToggleSetup = document.getElementById("btnToggleSetup");
+    const btnTutupSetup = document.getElementById("btnTutupSetup");
+    const connDot = document.getElementById("connDot");
+    const inputApiUrl = document.getElementById("inputApiUrl");
+    const inputAccessKey = document.getElementById("inputAccessKey");
+    const btnToggleKeyVis = document.getElementById("btnToggleKeyVis");
+    const btnSimpanKoneksi = document.getElementById("btnSimpanKoneksi");
+    const btnResetKoneksi = document.getElementById("btnResetKoneksi");
+
+    // Elemen DOM Form & Cascading
+    const selectCabang = document.getElementById("selectCabang");
+    const selectAE = document.getElementById("selectAE");
+    const selectWO = document.getElementById("selectWO");
+    const badgeTotalWO = document.getElementById("badgeTotalWO");
+    const badgeMasterSync = document.getElementById("badgeMasterSync");
+    const cardPelanggan = document.getElementById("cardPelanggan");
+    const btnReloadData = document.getElementById("btnReloadData");
+    const btnKunciGPS = document.getElementById("btnKunciGPS");
+    const inputGPS = document.getElementById("inputGPS");
+    const gpsStatusText = document.getElementById("gpsStatusText");
+    const inputFoto = document.getElementById("inputFoto");
+    const fotoPreviewContainer = document.getElementById("fotoPreviewContainer");
+    const fotoPlaceholder = document.getElementById("fotoPlaceholder");
+    const imgPreview = document.getElementById("imgPreview");
+    const fotoMeta = document.getElementById("fotoMeta");
+    const formVisit = document.getElementById("formVisit");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const btnSubmitText = document.getElementById("btnSubmitText");
+    const statusBanner = document.getElementById("statusBanner");
+
+    // Elemen DOM Dropdown Form Dinamis
+    const elUrutanVisit = document.getElementById("urutanVisit");
+    const elTopik1 = document.getElementById("topik1");
+    const elTopik2 = document.getElementById("topik2");
+    const elTopik3 = document.getElementById("topik3");
+    const elTopik4 = document.getElementById("topik4");
+    const elTopik5 = document.getElementById("topik5");
+    const elTopik6 = document.getElementById("topik6");
+    const elTopik7 = document.getElementById("topik7");
+    const elPainPoint = document.getElementById("painPoint");
+    const elSelectDetailKendala = document.getElementById("selectDetailKendala");
+    const elWrapperDetailManual = document.getElementById("wrapperDetailManual");
+    const elInputDetailManual = document.getElementById("inputDetailKendalaManual");
+    const elKategoriUpaya = document.getElementById("kategoriUpaya");
+
+    // ==============================================================================
+    // MANAJEMEN KONFIGURASI AMAN (URL FRAGMENT #cfg= & LOCALSTORAGE)
+    // ==============================================================================
+    function isValidAppsScriptUrl(urlStr) {
+      try {
+        const u = new URL(urlStr);
+        return u.protocol === "https:" && u.hostname === "script.google.com";
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function bacaKonfigurasi() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_CFG);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && isValidAppsScriptUrl(parsed.apiUrl) && parsed.accessKey) {
+          return parsed;
+        }
+      } catch (e) {
+        // Abaikan storage rusak
+      }
+      return null;
+    }
+
+    function simpanKonfigurasi(apiUrl, accessKey) {
+      localStorage.setItem(STORAGE_KEY_CFG, JSON.stringify({
+        apiUrl: apiUrl.trim(),
+        accessKey: accessKey.trim()
+      }));
+      perbaruiIndikatorKoneksi(true);
+    }
+
+    function hapusKonfigurasi() {
+      localStorage.removeItem(STORAGE_KEY_CFG);
+      appData = null;
+      dropdownOptions = null;
+      selectedCustomer = null;
+      inputApiUrl.value = "";
+      inputAccessKey.value = "";
+      perbaruiIndikatorKoneksi(false);
+      kosongkanDropdownForm("-- Hubungkan Spreadsheet Terlebih Dahulu --");
+      selectCabang.disabled = true;
+      selectAE.disabled = true;
+      selectWO.disabled = true;
+      selectCabang.innerHTML = '<option value="">-- Hubungkan Spreadsheet Terlebih Dahulu --</option>';
+      selectAE.innerHTML = '<option value="">-- Pilih Cabang Terlebih Dahulu --</option>';
+      selectWO.innerHTML = '<option value="">-- Pilih AE Terlebih Dahulu --</option>';
+      cardPelanggan.classList.add("hidden");
+      badgeTotalWO.textContent = "Belum Terhubung";
+      btnSubmit.disabled = true;
+    }
+
+    function perbaruiIndikatorKoneksi(terhubung) {
+      if (terhubung) {
+        connDot.className = "w-2 h-2 rounded-full bg-[#10B981]";
+        btnResetKoneksi.classList.remove("hidden");
+      } else {
+        connDot.className = "w-2 h-2 rounded-full bg-[#F59E0B]";
+        btnResetKoneksi.classList.add("hidden");
+      }
+    }
+
+    function prosesOnboardingDariHash() {
+      const hash = window.location.hash || "";
+      if (!hash || hash.indexOf("cfg=") === -1) return false;
+
+      const match = hash.match(/cfg=([^&]+)/);
+      if (!match) return false;
+
+      try {
+        const encoded = decodeURIComponent(match[1]);
+        const jsonStr = decodeURIComponent(escape(atob(encoded)));
+        const payload = JSON.parse(jsonStr);
+
+        if (payload && isValidAppsScriptUrl(payload.api) && String(payload.key || "").trim().length >= 8) {
+          simpanKonfigurasi(payload.api, String(payload.key).trim());
+          // Bersihkan hash dari address bar seketika agar kredensial tidak tertinggal di riwayat peramban
+          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+          return true;
+        }
+      } catch (e) {
+        tampilkanBanner("Tautan onboarding tidak valid atau rusak. Silakan masukkan koneksi secara manual.", "error");
+      }
+      return false;
+    }
+
+    // ==============================================================================
+    // INISIALISASI & PENGAMBILAN DATA DARI GOOGLE SPREADSHEET
+    // ==============================================================================
+    async function muatDataWO() {
+      const cfg = bacaKonfigurasi();
+      if (!cfg) {
+        perbaruiIndikatorKoneksi(false);
+        setupPanel.classList.remove("hidden");
+        badgeTotalWO.textContent = "Belum Terhubung";
+        btnSubmit.disabled = true;
+        kosongkanDropdownForm("-- Hubungkan Spreadsheet Terlebih Dahulu --");
+        tampilkanBanner("Aplikasi belum terhubung ke Google Sheets. Buka link onboarding dari Admin atau isi URL Web App dan Kode Akses pada panel di atas.", "warning");
+        return;
+      }
+
+      perbaruiIndikatorKoneksi(true);
+      inputApiUrl.value = cfg.apiUrl;
+      inputAccessKey.value = cfg.accessKey;
+
+      tampilkanBanner("Menyinkronkan Work Order aktif dan Master Dropdown dari Spreadsheet...", "info");
+      badgeTotalWO.textContent = "Memuat...";
+      btnSubmit.disabled = true;
+
+      try {
+        const urlObj = new URL(cfg.apiUrl);
+        urlObj.searchParams.set("key", cfg.accessKey);
+        urlObj.searchParams.set("_t", String(Date.now()));
+
+        const res = await fetch(urlObj.toString(), { method: "GET", cache: "no-store" });
+        const json = await res.json();
+
+        if (!json || !json.sukses) {
+          if (json && json.kode === 401) {
+            setupPanel.classList.remove("hidden");
+            throw new Error("Kode Akses ditolak server. Periksa kembali di menu Koneksi.");
+          }
+          throw new Error((json && json.pesan) || "Gagal memuat data dari Spreadsheet.");
+        }
+
+        appData = json;
+        dropdownOptions = json.dropdownOptions || {};
+        renderSemuaDropdownForm(dropdownOptions);
+        renderDropdownCabang();
+
+        if ((json.totalAktif || 0) === 0) {
+          tampilkanBanner("Terhubung ke Spreadsheet. Saat ini belum ada Work Order aktif di MONITORING_CABANG (0 WO). Opsi dropdown sudah disinkronkan dari MASTER_DROPDOWN.", "info");
+        } else {
+          sembunyikanBanner();
+        }
+      } catch (err) {
+        tampilkanBanner("Koneksi ke Spreadsheet gagal: " + err.message, "error");
+        badgeTotalWO.textContent = "Gagal Muat";
+        selectCabang.disabled = true;
+        selectAE.disabled = true;
+        selectWO.disabled = true;
+        kosongkanDropdownForm("-- Gagal Memuat Opsi --");
+      }
+    }
+
+    // ==============================================================================
+    // RENDER DROPDOWN FORM DINAMIS DARI SHEET MASTER_DROPDOWN
+    // ==============================================================================
+    function kosongkanDropdownForm(placeholderText) {
+      const targets = [
+        elUrutanVisit, elTopik1, elTopik2, elTopik3,
+        elTopik4, elTopik5, elTopik6, elTopik7,
+        elPainPoint, elSelectDetailKendala, elKategoriUpaya
+      ];
+      targets.forEach(el => {
+        el.innerHTML = '<option value="">' + placeholderText + '</option>';
+        el.disabled = true;
+      });
+      elWrapperDetailManual.classList.add("hidden");
+      elInputDetailManual.required = false;
+      badgeMasterSync.textContent = "Belum Tersinkron";
+    }
+
+    function isiSelectTunggal(el, daftar, placeholder) {
+      el.innerHTML = "";
+      const optDefault = document.createElement("option");
+      optDefault.value = "";
+      optDefault.textContent = placeholder;
+      el.appendChild(optDefault);
+
+      (daftar || []).forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        el.appendChild(opt);
+      });
+
+      el.disabled = (daftar || []).length === 0;
+    }
+
+    function renderSemuaDropdownForm(opts) {
+      if (!opts) return;
+
+      isiSelectTunggal(elUrutanVisit, opts.urutanVisit, "-- Pilih Urutan Kunjungan --");
+      isiSelectTunggal(elTopik1, opts.topik1, "-- Pilih Respon Topik 1 --");
+      isiSelectTunggal(elTopik2, opts.topik2, "-- Pilih Respon Topik 2 --");
+      isiSelectTunggal(elTopik3, opts.topik3, "-- Pilih Respon Topik 3 --");
+      isiSelectTunggal(elTopik4, opts.topik4, "-- Pilih Respon Topik 4 --");
+      isiSelectTunggal(elTopik5, opts.topik5, "-- Pilih Respon Topik 5 --");
+      isiSelectTunggal(elTopik6, opts.topik6, "-- Pilih Respon Topik 6 --");
+      isiSelectTunggal(elTopik7, opts.topik7, "-- Pilih Respon Topik 7 --");
+      isiSelectTunggal(elPainPoint, opts.painPoint, "-- Pilih Kategori Kendala Utama --");
+
+      // Kategori Upaya menyimpan targetStatus dari MASTER_DROPDOWN
+      elKategoriUpaya.innerHTML = '<option value="">-- Pilih Upaya Penyelamatan --</option>';
+      (opts.kategoriUpaya || []).forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item.label;
+        opt.textContent = item.label;
+        opt.dataset.targetStatus = item.targetStatus || "OPEN";
+        elKategoriUpaya.appendChild(opt);
+      });
+      elKategoriUpaya.disabled = (opts.kategoriUpaya || []).length === 0;
+
+      handlePainPointChange();
+      badgeMasterSync.textContent = "Tersinkron MASTER_DROPDOWN";
+    }
+
+    function handlePainPointChange() {
+      const pp = elPainPoint.value;
+      elWrapperDetailManual.classList.add("hidden");
+      elInputDetailManual.required = false;
+      elInputDetailManual.value = "";
+
+      if (!pp || !dropdownOptions) {
+        elSelectDetailKendala.innerHTML = '<option value="">-- Pilih Kategori Kendala Terlebih Dahulu --</option>';
+        elSelectDetailKendala.disabled = true;
+        return;
+      }
+
+      const daftarDetail = (dropdownOptions.detailKendalaMap && dropdownOptions.detailKendalaMap[pp]) ? dropdownOptions.detailKendalaMap[pp] : [];
+      elSelectDetailKendala.innerHTML = '<option value="">-- Pilih Detail Kendala --</option>';
+
+      daftarDetail.forEach(det => {
+        const opt = document.createElement("option");
+        opt.value = det;
+        opt.textContent = det;
+        elSelectDetailKendala.appendChild(opt);
+      });
+
+      const optManual = document.createElement("option");
+      optManual.value = "__LAINNYA__";
+      optManual.textContent = "Lainnya (Ketik Detail Manual)";
+      elSelectDetailKendala.appendChild(optManual);
+      elSelectDetailKendala.disabled = false;
+    }
+
+    function handleDetailKendalaChange() {
+      if (elSelectDetailKendala.value === "__LAINNYA__") {
+        elWrapperDetailManual.classList.remove("hidden");
+        elInputDetailManual.required = true;
+        elInputDetailManual.focus();
+      } else {
+        elWrapperDetailManual.classList.add("hidden");
+        elInputDetailManual.required = false;
+        elInputDetailManual.value = "";
+      }
+    }
+
+    // ==============================================================================
+    // LOGIKA FILTER BERTINGKAT (CASCADING DROPDOWN CABANG -> AE -> WO)
+    // ==============================================================================
+    function renderDropdownCabang() {
+      if (!appData) return;
+
+      const total = appData.totalAktif || 0;
+      badgeTotalWO.textContent = total + " WO Aktif";
+
+      if (!appData.cabangList || appData.cabangList.length === 0) {
+        selectCabang.innerHTML = '<option value="">-- Belum Ada WO Aktif di Spreadsheet --</option>';
+        selectCabang.disabled = true;
+        selectAE.disabled = true;
+        selectWO.disabled = true;
+        selectAE.innerHTML = '<option value="">-- Belum Ada WO Aktif --</option>';
+        selectWO.innerHTML = '<option value="">-- Belum Ada WO Aktif --</option>';
+        cardPelanggan.classList.add("hidden");
+        btnSubmit.disabled = true;
+        return;
+      }
+
+      selectCabang.innerHTML = '<option value="">-- Pilih Cabang --</option>';
+      appData.cabangList.forEach(cb => {
+        const opt = document.createElement("option");
+        opt.value = cb.nama;
+        opt.textContent = cb.label;
+        selectCabang.appendChild(opt);
+      });
+      selectCabang.disabled = false;
+      btnSubmit.disabled = false;
+
+      if (appData.cabangList.length === 1) {
+        selectCabang.value = appData.cabangList[0].nama;
+        handleCabangChange();
+      } else {
+        selectAE.disabled = true;
+        selectWO.disabled = true;
+        selectAE.innerHTML = '<option value="">-- Pilih Cabang Terlebih Dahulu --</option>';
+        selectWO.innerHTML = '<option value="">-- Pilih AE Terlebih Dahulu --</option>';
+        cardPelanggan.classList.add("hidden");
+      }
+    }
+
+    function handleCabangChange() {
+      const cb = selectCabang.value;
+      cardPelanggan.classList.add("hidden");
+      selectedCustomer = null;
+
+      if (!cb || !appData || !appData.pohonData || !appData.pohonData[cb]) {
+        selectAE.disabled = true;
+        selectWO.disabled = true;
+        selectAE.innerHTML = '<option value="">-- Pilih Cabang Terlebih Dahulu --</option>';
+        selectWO.innerHTML = '<option value="">-- Pilih AE Terlebih Dahulu --</option>';
+        return;
+      }
+
+      const daftarAE = Object.keys(appData.pohonData[cb]);
+      selectAE.innerHTML = '<option value="">-- Pilih Nama AE --</option>';
+      daftarAE.forEach(ae => {
+        const countWO = appData.pohonData[cb][ae].length;
+        const opt = document.createElement("option");
+        opt.value = ae;
+        opt.textContent = ae + " (" + countWO + " WO Aktif)";
+        selectAE.appendChild(opt);
+      });
+
+      selectAE.disabled = false;
+      selectWO.disabled = true;
+      selectWO.innerHTML = '<option value="">-- Pilih AE Terlebih Dahulu --</option>';
+
+      if (daftarAE.length === 1) {
+        selectAE.value = daftarAE[0];
+        handleAEChange();
+      }
+    }
+
+    function handleAEChange() {
+      const cb = selectCabang.value;
+      const ae = selectAE.value;
+      cardPelanggan.classList.add("hidden");
+      selectedCustomer = null;
+
+      if (!cb || !ae || !appData || !appData.pohonData[cb] || !appData.pohonData[cb][ae]) {
+        selectWO.disabled = true;
+        selectWO.innerHTML = '<option value="">-- Pilih AE Terlebih Dahulu --</option>';
+        return;
+      }
+
+      const daftarWO = appData.pohonData[cb][ae];
+      selectWO.innerHTML = '<option value="">-- Pilih Work Order Pelanggan --</option>';
+
+      if (daftarWO.length === 0) {
+        selectWO.innerHTML = '<option value="">Tidak ada Work Order aktif (Semua Selesai)</option>';
+        selectWO.disabled = true;
+        return;
+      }
+
+      daftarWO.forEach(woLabel => {
+        const opt = document.createElement("option");
+        opt.value = woLabel;
+        opt.textContent = woLabel;
+        selectWO.appendChild(opt);
+      });
+
+      selectWO.disabled = false;
+
+      if (daftarWO.length === 1) {
+        selectWO.value = daftarWO[0];
+        handleWOChange();
+      }
+    }
+
+    function handleWOChange() {
+      const rawWO = selectWO.value;
+      if (!rawWO || !appData) {
+        cardPelanggan.classList.add("hidden");
+        selectedCustomer = null;
+        return;
+      }
+
+      const match = rawWO.match(/\[([^\]]+)\]/);
+      if (!match) return;
+
+      const pppoe = match[1].trim();
+      const item = (appData.detailPelanggan || []).find(d => d.pppoe.toLowerCase() === pppoe.toLowerCase());
+
+      if (item) {
+        selectedCustomer = item;
+        document.getElementById("custNama").textContent = item.namaPelanggan;
+        document.getElementById("custPPPoE").textContent = item.pppoe;
+        document.getElementById("custPaket").textContent = item.paket + (item.harga ? " (" + item.harga + ")" : "");
+        document.getElementById("custNoHp").textContent = item.noHp || "-";
+        document.getElementById("custPaymentBadge").textContent = item.paymentKe || "P1";
+        document.getElementById("custStatusVisit").textContent = item.statusVisit || "Belum Dikunjungi";
+        document.getElementById("custAlamat").textContent = item.alamat || "Alamat tidak tercantum";
+
+        const btnWA = document.getElementById("btnWhatsApp");
+        if (item.noHp) {
+          let cleanHp = item.noHp.replace(/[^0-9]/g, "");
+          if (cleanHp.startsWith("0")) cleanHp = "62" + cleanHp.substring(1);
+          const pesanWA = encodeURIComponent(
+            "Halo Bapak/Ibu " + item.namaPelanggan +
+            ", salam hangat dari GriyaNet. Saya " + item.namaAE +
+            " selaku Account Executive ingin bersilaturahmi terkait layanan internet di rumah..."
+          );
+          btnWA.href = "https://wa.me/" + cleanHp + "?text=" + pesanWA;
+          btnWA.classList.remove("hidden");
+        } else {
+          btnWA.classList.add("hidden");
+        }
+
+        cardPelanggan.classList.remove("hidden");
+      }
+    }
+
+    // ==============================================================================
+    // SENSOR GPS OTOMATIS (GEOLOCATION API)
+    // ==============================================================================
+    btnKunciGPS.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        tampilkanBanner("Peramban Anda tidak mendukung sensor GPS.", "error");
+        return;
+      }
+
+      btnKunciGPS.disabled = true;
+      btnKunciGPS.textContent = "Mengunci...";
+      gpsStatusText.textContent = "Mencari Satelit...";
+      gpsStatusText.className = "text-xs font-medium text-[#64748B]";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          const acc = Math.round(pos.coords.accuracy);
+          inputGPS.value = lat + ", " + lng;
+          gpsStatusText.textContent = "Terkunci (Akurasi: +/-" + acc + "m)";
+          gpsStatusText.className = "text-xs font-semibold text-[#10B981]";
+          btnKunciGPS.disabled = false;
+          btnKunciGPS.textContent = "Perbarui";
+        },
+        (err) => {
+          gpsStatusText.textContent = "Gagal Mengunci";
+          gpsStatusText.className = "text-xs font-semibold text-[#EF4444]";
+          btnKunciGPS.disabled = false;
+          btnKunciGPS.textContent = "Coba Lagi";
+          tampilkanBanner("Izin lokasi ditolak atau GPS tidak aktif: " + err.message, "error");
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    });
+
+    // ==============================================================================
+    // KOMPRESI GAMBAR KLIEN DENGAN HTML5 CANVAS API
+    // ==============================================================================
+    inputFoto.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      namaFileFotoAsli = file.name;
+      const ukuranAwalKB = Math.round(file.size / 1024);
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_IMAGE_WIDTH) {
+            height = Math.round((height * MAX_IMAGE_WIDTH) / width);
+            width = MAX_IMAGE_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          fotoBase64Compressed = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+          const ukuranAkhirKB = Math.round((fotoBase64Compressed.length * 3 / 4) / 1024);
+          const persentaseHemat = ukuranAwalKB > 0 ? Math.max(0, Math.round((1 - ukuranAkhirKB / ukuranAwalKB) * 100)) : 0;
+
+          imgPreview.src = fotoBase64Compressed;
+          fotoMeta.textContent = "Ukuran Asli: " + ukuranAwalKB + " KB -> Terkompresi: " + ukuranAkhirKB + " KB (Hemat " + persentaseHemat + "%)";
+          fotoPlaceholder.classList.add("hidden");
+          fotoPreviewContainer.classList.remove("hidden");
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ==============================================================================
+    // PENGIRIMAN FORMULIR (SUBMIT KE GOOGLE APPS SCRIPT WEB APP)
+    // ==============================================================================
+    formVisit.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const cfg = bacaKonfigurasi();
+      if (!cfg) {
+        setupPanel.classList.remove("hidden");
+        tampilkanBanner("Koneksi ke Spreadsheet belum diatur.", "error");
+        return;
+      }
+
+      if (!selectCabang.value) {
+        tampilkanBanner("Pilih Cabang terlebih dahulu.", "error");
+        selectCabang.focus();
+        return;
+      }
+      if (!selectAE.value) {
+        tampilkanBanner("Pilih Nama AE terlebih dahulu.", "error");
+        selectAE.focus();
+        return;
+      }
+      if (!selectedCustomer) {
+        tampilkanBanner("Pilih Work Order Pelanggan yang sedang dikunjungi.", "error");
+        selectWO.focus();
+        return;
+      }
+
+      const detailKendalaFinal = (elSelectDetailKendala.value === "__LAINNYA__")
+        ? elInputDetailManual.value.trim()
+        : elSelectDetailKendala.value;
+
+      if (!detailKendalaFinal) {
+        tampilkanBanner("Lengkapi detail kendala pelanggan terlebih dahulu.", "error");
+        elSelectDetailKendala.focus();
+        return;
+      }
+
+      const optUpayaSelected = elKategoriUpaya.options[elKategoriUpaya.selectedIndex];
+      const targetStatusWO = optUpayaSelected ? (optUpayaSelected.dataset.targetStatus || "") : "";
+
+      const formData = new FormData(formVisit);
+      const payload = {
+        accessKey: cfg.accessKey,
+        cabang: selectCabang.value,
+        namaAE: selectAE.value,
+        pppoe: selectedCustomer.pppoe,
+        namaPelanggan: selectedCustomer.namaPelanggan,
+        rawWO: selectWO.value,
+        urutanVisit: formData.get("urutanVisit"),
+        topik1: formData.get("topik1"),
+        topik2: formData.get("topik2"),
+        topik3: formData.get("topik3"),
+        topik4: formData.get("topik4"),
+        topik5: formData.get("topik5"),
+        topik6: formData.get("topik6"),
+        topik7: formData.get("topik7"),
+        painPoint: formData.get("painPoint"),
+        detailKendala: detailKendalaFinal,
+        kategoriUpaya: formData.get("kategoriUpaya"),
+        tglBayar: formData.get("tglBayar"),
+        catatan: formData.get("catatan"),
+        gps: inputGPS.value || "",
+        fotoBase64: fotoBase64Compressed,
+        namaFileFoto: "VISIT_" + selectedCustomer.pppoe + "_" + Date.now() + ".jpg"
+      };
+
+      setSubmittingState(true);
+
+      try {
+        const response = await fetch(cfg.apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const resJson = await response.json();
+        setSubmittingState(false);
+
+        if (resJson && resJson.sukses) {
+          const statusHasil = resJson.statusBaruWO || targetStatusWO || "Tercatat";
+          tampilkanBanner("Laporan Berhasil Terkirim! Status WO: " + statusHasil, "success");
+          pindahkanWOSelesai(selectedCustomer.pppoe, statusHasil);
+          resetForm();
+        } else {
+          if (resJson && resJson.kode === 401) {
+            setupPanel.classList.remove("hidden");
+          }
+          throw new Error((resJson && resJson.pesan) || "Gagal menyimpan laporan.");
+        }
+      } catch (errSubmit) {
+        setSubmittingState(false);
+        tampilkanBanner("Gagal mengirim laporan: " + errSubmit.message, "error");
+      }
+    });
+
+    function pindahkanWOSelesai(pppoeSelesai, statusHasil) {
+      if (!appData) return;
+      const statusUp = String(statusHasil || "").toUpperCase();
+      const isClosed = statusUp.indexOf("CLOSED") !== -1 || statusUp.indexOf("TERMINATE") !== -1 || statusUp.indexOf("SELESAI") !== -1;
+      if (!isClosed) return;
+
+      const cb = selectCabang.value;
+      const ae = selectAE.value;
+
+      if (appData.pohonData && appData.pohonData[cb] && appData.pohonData[cb][ae]) {
+        const sebelum = appData.pohonData[cb][ae].length;
+        appData.pohonData[cb][ae] = appData.pohonData[cb][ae].filter(wo => wo.indexOf("[" + pppoeSelesai + "]") === -1);
+        const sesudah = appData.pohonData[cb][ae].length;
+        const selisih = Math.max(0, sebelum - sesudah);
+
+        appData.totalAktif = Math.max(0, (appData.totalAktif || 0) - selisih);
+        badgeTotalWO.textContent = appData.totalAktif + " WO Aktif";
+
+        const cbItem = (appData.cabangList || []).find(c => c.nama === cb);
+        if (cbItem) {
+          cbItem.totalWO = Math.max(0, cbItem.totalWO - selisih);
+          cbItem.label = cbItem.nama + " (" + cbItem.totalWO + " WO Aktif)";
+          const optCabang = Array.from(selectCabang.options).find(o => o.value === cb);
+          if (optCabang) optCabang.textContent = cbItem.label;
+        }
+
+        const optAE = Array.from(selectAE.options).find(o => o.value === ae);
+        if (optAE) optAE.textContent = ae + " (" + sesudah + " WO Aktif)";
+
+        handleAEChange();
+      }
+    }
+
+    function resetForm() {
+      formVisit.reset();
+      inputGPS.value = "";
+      gpsStatusText.textContent = "Belum Terkunci";
+      gpsStatusText.className = "text-xs font-medium text-[#64748B]";
+      fotoBase64Compressed = "";
+      namaFileFotoAsli = "";
+      fotoPlaceholder.classList.remove("hidden");
+      fotoPreviewContainer.classList.add("hidden");
+      imgPreview.src = "";
+      handlePainPointChange();
+    }
+
+    function setSubmittingState(isSubmitting) {
+      if (isSubmitting) {
+        btnSubmit.disabled = true;
+        btnSubmitText.textContent = "Mengirimkan Laporan...";
+      } else {
+        btnSubmit.disabled = !appData || (appData.totalAktif || 0) === 0;
+        btnSubmitText.textContent = "Kirim Laporan Kunjungan";
+      }
+    }
+
+    function tampilkanBanner(pesan, tipe) {
+      statusBanner.classList.remove(
+        "hidden",
+        "bg-blue-50", "border-blue-200", "text-blue-800",
+        "bg-emerald-50", "border-emerald-200", "text-emerald-800",
+        "bg-amber-50", "border-amber-200", "text-amber-800",
+        "bg-red-50", "border-red-200", "text-red-800"
+      );
+      if (tipe === "success") {
+        statusBanner.classList.add("bg-emerald-50", "border-emerald-200", "text-emerald-800");
+      } else if (tipe === "warning") {
+        statusBanner.classList.add("bg-amber-50", "border-amber-200", "text-amber-800");
+      } else if (tipe === "error") {
+        statusBanner.classList.add("bg-red-50", "border-red-200", "text-red-800");
+      } else {
+        statusBanner.classList.add("bg-blue-50", "border-blue-200", "text-blue-800");
+      }
+      statusBanner.textContent = pesan;
+      statusBanner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function sembunyikanBanner() {
+      statusBanner.classList.add("hidden");
+    }
+
+    // Event Listeners Setup Koneksi
+    btnToggleSetup.addEventListener("click", () => {
+      setupPanel.classList.toggle("hidden");
+    });
+
+    btnTutupSetup.addEventListener("click", () => {
+      setupPanel.classList.add("hidden");
+    });
+
+    btnToggleKeyVis.addEventListener("click", () => {
+      if (inputAccessKey.type === "password") {
+        inputAccessKey.type = "text";
+        btnToggleKeyVis.textContent = "Sembunyi";
+      } else {
+        inputAccessKey.type = "password";
+        btnToggleKeyVis.textContent = "Lihat";
+      }
+    });
+
+    btnSimpanKoneksi.addEventListener("click", () => {
+      const api = inputApiUrl.value.trim();
+      const key = inputAccessKey.value.trim();
+      if (!isValidAppsScriptUrl(api)) {
+        tampilkanBanner("URL Web App harus menggunakan HTTPS resmi dari script.google.com.", "error");
+        inputApiUrl.focus();
+        return;
+      }
+      if (key.length < 8) {
+        tampilkanBanner("Kode Akses wajib diisi (minimal 8 karakter).", "error");
+        inputAccessKey.focus();
+        return;
+      }
+      simpanKonfigurasi(api, key);
+      setupPanel.classList.add("hidden");
+      muatDataWO();
+    });
+
+    btnResetKoneksi.addEventListener("click", () => {
+      hapusKonfigurasi();
+      tampilkanBanner("Koneksi dan kredensial lokal perangkat telah diputus.", "warning");
+    });
+
+    // Event Listeners Cascading & Dropdown Dinamis
+    selectCabang.addEventListener("change", handleCabangChange);
+    selectAE.addEventListener("change", handleAEChange);
+    selectWO.addEventListener("change", handleWOChange);
+    elPainPoint.addEventListener("change", handlePainPointChange);
+    elSelectDetailKendala.addEventListener("change", handleDetailKendalaChange);
+    btnReloadData.addEventListener("click", muatDataWO);
+
+    // Registrasi PWA Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+          .then(reg => console.log("Service Worker terdaftar:", reg.scope))
+          .catch(err => console.log("Gagal registrasi SW:", err));
+      });
+    }
+
+    // Inisialisasi Awal
+    window.addEventListener("DOMContentLoaded", () => {
+      prosesOnboardingDariHash();
+      muatDataWO();
+    });
+  </script>
+</body>
+</html>
